@@ -34,12 +34,12 @@ Same client, same minute, both pages with gzip accepted:
 
 | | upstream | this streaming build |
 | --- | --- | --- |
-| bytes to watch the first frame | 36,486,179 | 5,269 + a few hundred KB of video |
+| bytes to watch the first frame | 36,486,179 | 7,210 + a few hundred KB of video |
 | time to a complete, playing page | 3.7 s – 4.0 s | 0.09 s – 0.19 s |
 | time to the first 256 KB of film | — (nothing until the end) | 0.16 s |
 | seek | none until the whole film is decoded | HTTP 206 range request |
 | peak memory before frame one | ~230 MiB (48 MB string, 36 MB typed array, blob copy) | the media decoder's own buffer |
-| page it has to parse | 48,259,444 bytes | 15,063 bytes (5,269 gzipped) |
+| page it has to parse | 48,259,444 bytes | 23,440 bytes (7,210 gzipped) |
 
 The single-file build stays as a live example of the trade: <https://nemo-010.github.io/moss-keeper-unpacked/single-file.html>,
 48,265,311 bytes, identical payload.
@@ -54,11 +54,24 @@ requiring all of it, and a host that allows real cache headers gets the video ca
 
 | build | what it is | size |
 | --- | --- | --- |
-| `index.html` | the film as a real `film.mp4` next to the page | 15 KB page, 36 MB video |
+| `index.html` | the film as a real `film.mp4` next to the page | 23 KB page, 36 MB video |
 | `single-file.html` | the film base64'd back into the page | 48.3 MB, 1.34× the film |
 
 The single-file build is the upstream trick, kept because it is the interesting part: one file, no server,
 works from `file://`, nothing else to fetch. It is not the build to publish a film with.
+
+## Player
+
+Both builds share `src/player.js`. Controls: play/pause, seek, mute, a volume slider, fullscreen, and a
+clock. The volume slider is draggable and keyboard-driven (`↑ ↓` in 5% steps, `Shift` for 10%, `Home`/`End`
+for silence/full), reports itself to screen readers, and both volume and mute are remembered between visits.
+Where the platform won't let a script set volume — iOS hands that to the hardware buttons — the slider and
+mute button hide themselves instead of lying about the level.
+
+Keyboard: `Space`/`K` play/pause · `←`/`→` seek 5 s · `M` mute · `F` fullscreen.
+
+Also handled: a buffering spinner if the stream stalls, a reload offer if the file fails to load, controls
+that fade out and come back with the cursor, and a `<noscript>` path.
 
 ## Builder
 

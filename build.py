@@ -41,7 +41,8 @@ def encode(path):
     return base64.b64encode(path.read_bytes()).decode("ascii")
 
 
-def render(template, player, poster_src, video_attrs, reel, head_extra, noscript):
+def render(template, player, poster_src, video_attrs, reel, head_extra, noscript,
+           load_label):
     source = player.read_text(encoding="utf-8")
     if "</script" in source.lower():
         sys.exit("player.js contains a closing script tag; the browser would cut it there")
@@ -51,6 +52,7 @@ def render(template, player, poster_src, video_attrs, reel, head_extra, noscript
         "REEL": reel,
         "HEAD_EXTRA": head_extra,
         "NOSCRIPT": noscript,
+        "LOAD_LABEL": load_label,
         "PLAYER": source.rstrip("\n"),
     }
     out = template
@@ -81,6 +83,7 @@ def build(out_dir, film, poster, only):
             reel="",
             head_extra='<link rel="preload" as="video" href="film.mp4" type="video/mp4">',
             noscript=NOSCRIPT_ASSET,
+            load_label="Loading the film…",
         )
         (out_dir / "index.html").write_text(page, encoding="utf-8")
         print("  %-18s %10d B  (video is a separate, range-requestable file)"
@@ -95,6 +98,7 @@ def build(out_dir, film, poster, only):
             reel=reel,
             head_extra="",
             noscript=NOSCRIPT_SINGLE,
+            load_label="Unrolling the film…",
         )
         (out_dir / "single-file.html").write_text(page, encoding="utf-8")
         size = len(page.encode())

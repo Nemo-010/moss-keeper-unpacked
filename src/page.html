@@ -131,14 +131,14 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   cursor: pointer;
   touch-action: none;
 }
-#rail {
+#rail, #volRail {
   position: relative;
   width: 100%;
   height: 2px;
   background: var(--line);
   border-radius: 2px;
 }
-#fill {
+#fill, #volFill {
   position: absolute;
   left: 0;
   top: 0;
@@ -147,6 +147,26 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   background: var(--accent);
   border-radius: 2px;
 }
+#volFill { width: 100%; }
+#vol {
+  flex: none;
+  width: 84px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  touch-action: none;
+}
+#vol[hidden] { display: none; }
+#time {
+  flex: none;
+  font-size: 12px;
+  letter-spacing: .06em;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+#track:focus-visible, #vol:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 3px; }
 .ic {
   padding: 0;
   width: 40px;
@@ -161,6 +181,25 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   -webkit-backdrop-filter: none;
 }
 .ic svg { width: 20px; height: 20px; fill: var(--ink); }
+.ic svg.stroke { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; }
+.ic svg.stroke .solid { fill: var(--ink); stroke: none; }
+#buff {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 50%;
+  border: 2px solid rgba(243, 234, 216, .18);
+  border-top-color: var(--accent);
+  animation: spin 1s linear infinite;
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none;
+}
+#buff.on { opacity: 1; }
+@keyframes spin { to { transform: rotate(360deg); } }
 #load {
   position: absolute;
   inset: auto 0 12% 0;
@@ -186,7 +225,8 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   line-height: 1.7;
   padding: 0 24px;
 }
-@media (prefers-reduced-motion: reduce) { #grain { display: none; } }
+@media (max-width: 620px) { #credit { display: none; } #vol { width: 60px; } }
+@media (prefers-reduced-motion: reduce) { #grain { display: none; } #buff { animation: none; } }
 </style>
 {{HEAD_EXTRA}}
 </head>
@@ -197,12 +237,16 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     <img id="poster" alt="An ancient giant overgrown with moss kneels in a misty forest at sunrise" src="{{POSTER_SRC}}">
     <canvas id="grain" width="256" height="139"></canvas>
     <div id="veil" hidden><h1 id="ttl">The Moss Keeper</h1><button id="go">Watch with sound</button></div>
-    <div id="load">Unrolling the film…</div>
+    <div id="load">{{LOAD_LABEL}}</div>
+    <div id="buff"></div>
     <noscript><div id="noscript">{{NOSCRIPT}}</div></noscript>
     <button id="sound">Turn sound on</button>
     <div id="bar" class="fade">
       <button class="ic" id="pp" aria-label="Pause"><svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
-      <div id="track" role="slider" aria-label="Seek" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="rail"><div id="fill"></div></div></div>
+      <span id="time">0:00 / 0:00</span>
+      <div id="track" role="slider" aria-label="Seek" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0:00 of 0:00"><div id="rail"><div id="fill"></div></div></div>
+      <button class="ic" id="mute" aria-label="Mute" aria-pressed="false"><svg class="stroke" viewBox="0 0 24 24"><path class="solid" d="M4 9.5h3.4L12 5.6v12.8L7.4 14.5H4z"/><path d="M16.2 9.2a4.3 4.3 0 0 1 0 5.6"/><path d="M18.6 6.8a7.6 7.6 0 0 1 0 10.4"/></svg></button>
+      <div id="vol" role="slider" aria-label="Volume" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="100%"><div id="volRail"><div id="volFill"></div></div></div>
       <button class="ic" id="fs" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5v2H6v3zm11-5h5v5h-2V6h-3zM6 15v3h3v2H4v-5zm12 3v-3h2v5h-5v-2z"/></svg></button>
       <a id="credit" href="https://github.com/ChetasLua/moss-keeper" rel="noopener">film by ChetasLua</a>
     </div>

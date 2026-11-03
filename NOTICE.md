@@ -49,11 +49,18 @@ Deliberate differences from upstream, all in the player source:
 
 - The film and poster are separate files in the default build, so the video streams and seeks over range
   requests instead of riding inside the HTML. (On GitHub Pages both still get `cache-control: max-age=600`.)
+- A volume slider and mute button, with keyboard support and the level remembered between visits; both hide
+  themselves where a script cannot set volume (iOS).
+- A clock (`0:41 / 1:20`), an `aria-valuetext` on the seek bar, a buffering spinner when the stream stalls,
+  and a reload offer when the film fails to load.
+- The cursor is restored when the controls come back. Upstream hid it after 2.2 s of stillness and never put
+  it back, so the pointer stayed invisible for the rest of the film.
 - `try/catch` around the base64 decode, with a message instead of a permanent "Unrolling the film…".
 - `<noscript>` fallback.
 - Space no longer hijacks activation of a focused button.
-- Arrow-key seeks are guarded against a NaN duration before metadata arrives.
-- `pointercancel` ends a drag on the seek bar.
+- Arrow-key seeks are guarded against a NaN duration before metadata arrives, and the volume slider owns its
+  own arrow keys instead of seeking with them.
+- `pointercancel` ends a drag on either slider.
 - `role="group"` on the frame, so its label is actually announced.
 - The "turn sound on" rewind is a named constant (`RESTART_SOUND_WITHIN`), documented in the README, rather
   than a bare `14`.
