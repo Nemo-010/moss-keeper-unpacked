@@ -1,0 +1,6 @@
+{
+  "name": "moss-keeper-unpacked-test",
+  "private": true,
+  "type": "module",
+  "devDependencies": { "jsdom": "^30.1.3" }
+}
