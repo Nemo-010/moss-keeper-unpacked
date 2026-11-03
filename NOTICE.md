@@ -47,8 +47,8 @@ errors, mastered to −14.5 LUFS integrated.
 
 Deliberate differences from upstream, all in the player source:
 
-- The film and poster are separate files in the default build, so the video streams, seeks over range
-  requests and caches on its own instead of riding inside the HTML.
+- The film and poster are separate files in the default build, so the video streams and seeks over range
+  requests instead of riding inside the HTML. (On GitHub Pages both still get `cache-control: max-age=600`.)
 - `try/catch` around the base64 decode, with a message instead of a permanent "Unrolling the film…".
 - `<noscript>` fallback.
 - Space no longer hijacks activation of a focused button.

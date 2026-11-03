@@ -28,6 +28,26 @@ $ python3 build.py --verify path/to/upstream/index.html
 `--verify` decodes both blobs, re-encodes them and checks that the result is byte-identical to the original
 file, so the claim is checkable rather than asserted. See [NOTICE.md](NOTICE.md) for hashes and attribution.
 
+## Measured
+
+Same client, same minute, both pages with gzip accepted:
+
+| | upstream | this streaming build |
+| --- | --- | --- |
+| bytes to watch the first frame | 36,486,179 | 5,269 + a few hundred KB of video |
+| time to a complete, playing page | 3.7 s – 4.0 s | 0.09 s – 0.19 s |
+| time to the first 256 KB of film | — (nothing until the end) | 0.16 s |
+| seek | none until the whole film is decoded | HTTP 206 range request |
+| peak memory before frame one | ~230 MiB (48 MB string, 36 MB typed array, blob copy) | the media decoder's own buffer |
+| page it has to parse | 48,259,444 bytes | 15,063 bytes (5,269 gzipped) |
+
+The single-file build stays as a live example of the trade: <https://nemo-010.github.io/moss-keeper-unpacked/single-file.html>,
+48,265,311 bytes, identical payload.
+
+One honest caveat: GitHub Pages sends `cache-control: max-age=600` for every file, so a returning visitor
+re-fetches either way. The gain here is that the film can start after a few hundred kilobytes instead of
+requiring all of it, and a host that allows real cache headers gets the video cached once and for good.
+
 ## Two builds, one template
 
 `build.py` renders `src/page.html` with `src/player.js` and writes both:
